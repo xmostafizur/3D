@@ -1,16 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Micro Game</title>
+    <title>ডেথ বক্সার</title>
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
+        body {
+            background-color: black;
+            color: red;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            animation: fadeInBody 1.5s ease-out;
+        }
+
+        .container {
+            padding: 20px;
+            animation: slideInUp 1.5s ease-out;
+        }
+
+        .logo img {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 50%;
+            animation: logoBounce 2s ease infinite;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: red;
+            text-shadow: 0 0 30px red;
+            margin: 20px 0;
+            animation: fadeInTitle 2s ease-out;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: green;
+            display: none;
+            animation: fadeInMessage 1s ease-out, pulse 1.5s infinite;
+        }
+
+        form {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: red;
+            animation: labelFadeIn 1s ease-out;
+        }
+
+        input[type="tel"],
+        input[type="time"] {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 12px;
+            border: 2px solid red;
+            border-radius: 8px;
+            background-color: black;
+            color: red;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px red;
+        }
+
+        input[type="tel"]:focus,
+        input[type="time"]:focus {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff0000;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            background-color: red;
+            color: black;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: darkred;
+            transform: scale(1.1);
+        }
+
+        .switch-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .switch {
+            width: 100px;
+            height: 30px;
+            background-color: #333;
+            border-radius: 30px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .switch input:checked + .slider {
+            transform: translateX(70px);
+            background-color: red;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: gray;
+        }
+
+        footer a {
+            color: red;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        @keyframes fadeInBody {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInTitle {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes logoBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInMessage {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="game.js"></script>
+    <div class="container">
+        <div class="logo">
+            <img src="https://i.ibb.co/pfyCpfb/14697098.png" alt="ডেথ লোগো">
+        </div>
+        <h1 class="title">ডেথ বক্সার</h1>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="toggleSwitch" disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <form>
+            <label for="phoneNumber">ফোন নম্বর</label>
+            <input type="tel" placeholder="01XXXXXXXXX" id="phoneNumber">
+            
+            <label for="customTime1">টাইম</label>
+            <input type="time" id="customTime1" value="12:00">
+            
+            <label for="customTime2">শেষ টাইম</label>
+            <input type="time" id="customTime2" value="12:00">
+            
+            <button type="button" id="submit">শুরু করুন</button>
+        </form>
+        <p class="message" id="bombMessage"></p>
+        <footer>
+            <p>Developed by <span>Mostafizur Rahman</span> | <a href="https://t.me/rulebreaker13" target="_blank">Join our Telegram</a></p>
+        </footer>
+    </div>
+    <script>
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const submitButton = document.getElementById('submit');
+    const bombMessage = document.getElementById('bombMessage');
+    const phoneNumber = document.getElementById('phoneNumber');
+    const customTime2 = document.getElementById('customTime2');
+
+    document.querySelector('.slider').addEventListener('click', function() {
+        if (!toggleSwitch.checked) {
+            const key = prompt('সুইচ চালু করতে Key দিন:');
+            if (key === 'RAHIYAN') {
+                toggleSwitch.disabled = false;
+                toggleSwitch.checked = true;
+            } else {
+                alert('ভুল Key! অনুগ্রহ করে সঠিক Key দিন।');
+            }
+        }
+    });
+
+    submitButton.addEventListener('click', function() {
+        const phone = phoneNumber.value;
+        const endTime = customTime2.value;
+
+        if (!toggleSwitch.checked) {
+            bombMessage.style.display = 'block';
+            bombMessage.style.color = 'red';
+            bombMessage.innerText = 'দুঃখিত, দয়া করে আগে উপরের সুইচ টা অন করুন।';
+        } else if (!phone || !/^01\d{9}$/.test(phone)) {
+            bombMessage.style.display = 'block';
+            bombMessage.style.color = 'red';
+            bombMessage.innerText = 'অনুগ্রহ করে একটি সঠিক ফোন নম্বর দিন।';
+        } else {
+            bombMessage.style.display = 'block';
+            bombMessage.style.color = 'green';
+            bombMessage.innerText = `${phone} এই নাম্বারে বোম্বিং চালু হয়েছে এবং ${endTime} এ বন্ধ হবে।`;
+        }
+    });
+</script>
+
 </body>
 </html>
